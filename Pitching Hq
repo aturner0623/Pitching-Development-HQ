@@ -1,0 +1,100 @@
+// script.js
+class PitchingDashboard {
+    constructor() {
+        this.goals = [];
+        this.velocityData = [];
+        this.commandData = [];
+        this.initializeCharts();
+    }
+
+    initializeCharts() {
+        this.velocityChart = new Chart(
+            document.getElementById('velocity-chart'),
+            {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Max Velocity',
+                        data: [],
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                }
+            }
+        );
+
+        this.commandChart = new Chart(
+            document.getElementById('command-chart'),
+            {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Strike Percentage',
+                        data: [],
+                        borderColor: 'rgb(255, 99, 132)',
+                        tension: 0.1
+                    }]
+                }
+            }
+        );
+    }
+
+    addGoal(description, target) {
+        this.goals.push({ description, target, completed: false });
+        this.updateGoalsList();
+    }
+
+    addVelocityData(date, velocity) {
+        this.velocityData.push({ date, velocity });
+        this.updateVelocityChart();
+    }
+
+    addCommandData(date, percentage) {
+        this.commandData.push({ date, percentage });
+        this.updateCommandChart();
+    }
+
+    updateGoalsList() {
+        const goalsList = document.getElementById('goals-list');
+        goalsList.innerHTML = this.goals.map(goal => `
+            <div class="goal-item">
+                <input type="checkbox" ${goal.completed ? 'checked' : ''}>
+                <span>${goal.description} - Target: ${goal.target}</span>
+            </div>
+        `).join('');
+    }
+
+    updateVelocityChart() {
+        this.velocityChart.data.labels = this.velocityData.map(d => d.date);
+        this.velocityChart.data.datasets[0].data = this.velocityData.map(d => d.velocity);
+        this.velocityChart.update();
+    }
+
+    updateCommandChart() {
+        this.commandChart.data.labels = this.commandData.map(d => d.date);
+        this.commandChart.data.datasets[0].data = this.commandData.map(d => d.percentage);
+        this.commandChart.update();
+    }
+}
+
+const dashboard = new PitchingDashboard();
+
+function addGoal() {
+    const description = prompt('Enter goal description:');
+    const target = prompt('Enter target:');
+    dashboard.addGoal(description, target);
+}
+
+function addVelocityData() {
+    const velocity = prompt('Enter velocity (mph):');
+    const date = new Date().toLocaleDateString();
+    dashboard.addVelocityData(date, parseFloat(velocity));
+}
+
+function addCommandData() {
+    const percentage = prompt('Enter strike percentage:');
+    const date = new Date().toLocaleDateString();
+    dashboard.addCommandData(date, parseFloat(percentage));
+}
