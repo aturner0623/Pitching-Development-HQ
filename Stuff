@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="styles.css">
+<script src="script.js"></script>
 class PitchingDashboard {
     constructor() {
         this.goals = [];
